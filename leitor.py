@@ -79,7 +79,8 @@ def carregar_afd(caminho):
     arquivo = Path(caminho)
 
     try:
-        with arquivo.open(encoding="utf-8") as f:
+        # utf-8-sig também aceita arquivos salvos "UTF-8 com BOM" (Bloco de Notas, PowerShell 5.1).
+        with arquivo.open(encoding="utf-8-sig") as f:
             dados = json.load(f, object_pairs_hook=_rejeitar_chaves_duplicadas)
     except FileNotFoundError:
         raise ErroAFD(f"arquivo não encontrado: {arquivo}") from None

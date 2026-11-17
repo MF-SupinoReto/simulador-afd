@@ -64,7 +64,8 @@ def mostrar_automato(afd, arquivo=None):
 
 def carregar_interativo(carregar_afd):
     """Solicita o arquivo, chama o leitor do Yruan e informa o resultado."""
-    entrada = input("\nCaminho do JSON (ex.: exemplos/exemplo.json): ").strip()
+    # strip("\"'") remove as aspas do "Copiar como caminho" do Windows.
+    entrada = input("\nCaminho do JSON (ex.: exemplos/termina_em_1.json): ").strip().strip("\"'")
     if not entrada:
         print("Informe o caminho de um arquivo JSON.")
         return None, None
@@ -126,8 +127,8 @@ def testar_sequencia(afd, simular_afd):
             raise ValueError("o histórico do motor deve ser uma lista de transições")
 
         estado_final = mostrar_historico(afd, historico)
-        print("Estado alcançado:", estado_final)
-        print("\nRESULTADO:", "SEQUÊNCIA ACEITA" if aceita else "SEQUÊNCIA REJEITADA")
+        decisao = "ACEITA" if aceita else "REJEITA"
+        print(f"\nResultado: {decisao} (terminou em {estado_final})")
     except (ValueError, KeyError, TypeError) as erro:
         print(f"Não foi possível simular a sequência: {erro}")
 

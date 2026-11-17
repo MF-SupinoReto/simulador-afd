@@ -62,10 +62,11 @@ def simular_afd(afd: dict, sequencia: str) -> tuple[bool, list]:
 
     # A sequência vazia não percorre transições: basta verificar
     # se o estado inicial já é um estado final.
-    for simbolo in sequencia:
+    for posicao, simbolo in enumerate(sequencia, start=1):
         if simbolo not in alfabeto:
             raise ValueError(
-                f"símbolo inválido {simbolo!r}: não pertence ao alfabeto"
+                f"símbolo inválido {simbolo!r} na posição {posicao}: "
+                "não pertence ao alfabeto"
             )
 
         transicoes_estado = transicoes.get(estado_atual)
