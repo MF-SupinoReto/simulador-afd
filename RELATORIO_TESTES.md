@@ -7,6 +7,7 @@ Responsável: Matheus · `python -m unittest` com Python 3.11.9
 | 1 | 83 testes: 81 passam, 2 falham (pendências P1 e P2) |
 | 2 | P1 e P2 corrigidas com o ok de Yruan e Enzo: **83 de 83 passam** |
 | 3 | Sugestões S1 e S3 aplicadas (+1 teste da posição do erro): **84 de 84 passam** |
+| 4 | Exemplos reduzidos a `termina_em_1` e `contem_ab` (saem `zeros_pares` e `invalidos/`; os testes de interface passam a criar JSONs inválidos temporários): **83 de 83 passam** |
 
 ## Conferência do que foi pedido no guia
 
@@ -14,7 +15,7 @@ Responsável: Matheus · `python -m unittest` com Python 3.11.9
 |---|---|
 | `101` → aceita, `100` → rejeita | OK |
 | `102` → erro de símbolo, sem fechar o programa | OK |
-| Sentença vazia conforme o estado inicial | OK (`zeros_pares` aceita, `termina_em_1` rejeita) |
+| Sentença vazia conforme o estado inicial | OK (`termina_em_1` e `contem_ab` rejeitam, pois o inicial não é final) |
 | JSON incompleto / malformado → erro claro | OK (mostra linha e coluna) |
 | Transições faltantes → erro claro | OK |
 | Exatamente uma transição por símbolo | OK (inclusive chave duplicada no JSON) |

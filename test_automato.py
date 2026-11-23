@@ -35,7 +35,6 @@ from leitor import ErroAFD, carregar_afd, validar_afd
 
 PASTA = Path(__file__).resolve().parent
 EXEMPLOS = PASTA / "exemplos"
-INVALIDOS = EXEMPLOS / "invalidos"
 
 
 def afd_termina_em_1():
@@ -274,7 +273,6 @@ class TestOraculo(unittest.TestCase):
 
     CASOS = {
         "termina_em_1.json": lambda s: s.endswith("1"),
-        "zeros_pares.json": lambda s: s.count("0") % 2 == 0,
         "contem_ab.json": lambda s: "ab" in s,
     }
 
@@ -547,32 +545,11 @@ class TestExemplos(unittest.TestCase):
 
     def test_todos_os_exemplos_validos_carregam(self):
         arquivos = sorted(EXEMPLOS.glob("*.json"))
-        self.assertGreaterEqual(len(arquivos), 3)
+        self.assertGreaterEqual(len(arquivos), 2)
         for arquivo in arquivos:
             with self.subTest(arquivo=arquivo.name):
                 afd = carregar_afd(arquivo)
                 self.assertIsInstance(afd, dict)
-
-    def test_todos_os_exemplos_invalidos_sao_recusados(self):
-        esperado = {
-            "campo_faltando.json": "estado_inicial",
-            "destino_inexistente.json": "q5",
-            "estado_final_inexistente.json": "q2",
-            "estado_inicial_invalido.json": "q9",
-            "json_malformado.json": "JSON malformado",
-            "nao_deterministico.json": "mais de um destino",
-            "simbolo_fora_do_alfabeto.json": "'2'",
-            "transicao_duplicada.json": "mais de uma vez",
-            "transicao_faltando.json": "não tem transição",
-            "varios_erros.json": "5 problemas",
-        }
-        encontrados = {arquivo.name for arquivo in INVALIDOS.glob("*.json")}
-        self.assertEqual(encontrados, set(esperado), "há exemplo inválido sem teste")
-        for nome, trecho in esperado.items():
-            with self.subTest(arquivo=nome):
-                with self.assertRaises(ErroAFD) as ctx:
-                    carregar_afd(INVALIDOS / nome)
-                self.assertIn(trecho, str(ctx.exception))
 
 
 # ==========================================================================
@@ -587,9 +564,6 @@ class TestIntegracao(unittest.TestCase):
             ("termina_em_1.json", "100", False),
             ("termina_em_1.json", "", False),
             ("termina_em_1.json", "1", True),
-            ("zeros_pares.json", "", True),
-            ("zeros_pares.json", "1001", True),
-            ("zeros_pares.json", "10", False),
             ("contem_ab.json", "bbab", True),
             ("contem_ab.json", "bbba", False),
             ("contem_ab.json", "", False),
@@ -609,7 +583,7 @@ class TestIntegracao(unittest.TestCase):
 # 6. Interface (main.py) com entradas simuladas
 # ==========================================================================
 
-class TestInterface(unittest.TestCase):
+class TestInterface(ArquivosTemporarios):
 
     def executar(self, *entradas):
         """Roda main.main() digitando as entradas e devolve o que foi impresso."""
@@ -638,12 +612,13 @@ class TestInterface(unittest.TestCase):
         self.assertIn("Resultado: ACEITA", texto)  # continuou funcionando depois
 
     def test_sequencia_vazia(self):
-        texto = self.executar("1", "exemplos/zeros_pares.json", "2", "", "0")
+        texto = self.executar("1", "exemplos/termina_em_1.json", "2", "", "0")
         self.assertIn("sequência é vazia", texto)
-        self.assertIn("Resultado: ACEITA", texto)
+        self.assertIn("Resultado: REJEITA", texto)
 
     def test_json_quebrado_mostra_erro_e_continua(self):
-        texto = self.executar("1", "exemplos/invalidos/json_malformado.json", "3", "0")
+        quebrado = self.criar("quebrado.json", '{"estados": ["q0", "q1"],}')
+        texto = self.executar("1", str(quebrado), "3", "0")
         self.assertIn("Não foi possível carregar", texto)
         self.assertIn("JSON malformado", texto)
         self.assertIn("Nenhum autômato carregado", texto)
@@ -657,9 +632,12 @@ class TestInterface(unittest.TestCase):
         self.assertIn("Informe o caminho", texto)
 
     def test_arquivo_invalido_mantem_o_anterior(self):
+        incompleto = afd_termina_em_1()
+        del incompleto["transicoes"]["q1"]["0"]
+        invalido = self.criar("transicao_faltando.json", incompleto)
         texto = self.executar(
             "1", "exemplos/termina_em_1.json",
-            "1", "exemplos/invalidos/transicao_faltando.json",
+            "1", str(invalido),
             "2", "1", "0",
         )
         self.assertIn("Não foi possível carregar", texto)

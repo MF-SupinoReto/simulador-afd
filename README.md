@@ -77,7 +77,7 @@ Erros não fecham o programa: a mensagem aparece e o menu volta.
 ### Conferir só um arquivo JSON
 
 ```
-python leitor.py exemplos/termina_em_1.json exemplos/invalidos/varios_erros.json
+python leitor.py exemplos/termina_em_1.json exemplos/contem_ab.json
 ```
 
 Mostra `[VÁLIDO]` ou `[INVÁLIDO]` com o motivo de cada arquivo.
@@ -119,9 +119,7 @@ Salve o arquivo em **UTF-8**. Todos os números e símbolos vão **entre aspas**
 | Arquivo | Linguagem aceita |
 |---|---|
 | `exemplos/termina_em_1.json` | binários terminados em 1 |
-| `exemplos/zeros_pares.json` | binários com quantidade par de zeros (aceita a vazia) |
 | `exemplos/contem_ab.json` | sequências sobre {a, b} que contêm `ab` |
-| `exemplos/invalidos/*.json` | 10 arquivos com erros, um tipo de erro em cada (e um com vários) |
 
 ### Erros detectados ao carregar
 
@@ -141,14 +139,14 @@ python -m unittest          # resumo
 python -m unittest -v       # nome de cada teste
 ```
 
-São 84 testes em `test_automato.py`, divididos em:
+São 83 testes em `test_automato.py`, divididos em:
 
 | Grupo | O que cobre |
 |---|---|
 | `TestMotor` | aceitação, rejeição, sentença vazia, símbolo inválido em qualquer posição, histórico encadeado, estado sumidouro, nomes com acento, alfabeto Unicode, sequência de 100 mil símbolos |
-| `TestOraculo` | compara os 3 AFDs de exemplo com a definição da linguagem em **todas** as sequências de até 10 símbolos (2047 por AFD binário) |
+| `TestOraculo` | compara os 2 AFDs de exemplo com a definição da linguagem em **todas** as sequências de até 10 símbolos (2047 por AFD) |
 | `TestLeitor` | cada regra de validação, JSON malformado, arquivo vazio, não UTF-8, chave duplicada |
-| `TestExemplos` | todos os arquivos de `exemplos/` e `exemplos/invalidos/` |
+| `TestExemplos` | todos os arquivos de `exemplos/` carregam sem erro |
 | `TestIntegracao` | leitor + motor juntos |
 | `TestInterface` | `main.py` com entradas simuladas: fluxo completo, erros sem encerrar, Ctrl+C, fim da entrada |
 | `TestPendencias` | falhas encontradas pelos testes e já corrigidas: JSON com BOM e caminho entre aspas (ver `RELATORIO_TESTES.md`) |
@@ -160,8 +158,7 @@ main.py               interface de terminal (menu)
 leitor.py             carregar_afd(caminho) -> dict  |  validar_afd(dados) -> dict
 automato.py           simular_afd(afd, sequencia) -> (aceita, historico)
 test_automato.py      testes automáticos (unittest)
-exemplos/             AFDs válidos
-exemplos/invalidos/   AFDs com erros, para demonstração e testes
+exemplos/             AFDs de exemplo (termina em 1, contém ab)
 RELATORIO_TESTES.md   falhas encontradas nos testes
 ROTEIRO_APRESENTACAO.md  roteiro da apresentação e dos slides
 ```

@@ -117,8 +117,7 @@ tempo é proporcional ao tamanho da entrada, O(n)."
 
 **Fala:** "Dois casos pedem cuidado. Na sequência vazia, o autômato não
 anda: a resposta depende só de o estado inicial ser final. No exemplo
-'termina em 1' a vazia é rejeitada, e no 'quantidade par de zeros' ela é
-aceita, porque zero é par. E se aparece um símbolo que não está no
+'termina em 1' a vazia é rejeitada, porque q0 não é final. E se aparece um símbolo que não está no
 alfabeto, como o 2 em 102, o motor avisa a interface em vez de inventar uma
 transição, e diz a posição: 'símbolo inválido 2 na posição 3'."
 
@@ -137,7 +136,7 @@ sequência é lida caractere por caractere."
 
 ### Slide 8 — Validação · Yruan · 1 min 15
 
-**No slide:** lista curta + print do `varios_erros.json`
+**No slide:** lista curta
 
 - JSON malformado → linha e coluna
 - Campo faltando ou com nome errado
@@ -162,11 +161,11 @@ Siga o **roteiro da demo** na próxima seção.
 ### Slide 10 — Como testamos · Matheus · 50 s
 
 **No slide:**
-- **84 testes automáticos** com `unittest`: `python -m unittest`
+- **83 testes automáticos** com `unittest`: `python -m unittest`
 - Motor · Leitor · Exemplos · Integração · Interface
-- Print do terminal: `Ran 84 tests ... OK`
+- Print do terminal: `Ran 83 tests ... OK`
 
-**Fala:** "Para garantir que tudo funciona junto, criei 84 testes
+**Fala:** "Para garantir que tudo funciona junto, criei 83 testes
 automáticos com o `unittest`, que já vem com o Python. Eles cobrem os casos
 mínimos do guia (101 aceita, 100 rejeita, 102 dá erro, sentença vazia,
 JSON quebrado, transição faltando) e também testam o menu do `main.py`,
@@ -194,7 +193,7 @@ sequências. Se discordar em uma, o teste mostra qual foi."
 
 - JSON salvo "UTF-8 com BOM" (Bloco de Notas/PowerShell) era recusado → corrigido
 - Caminho colado com aspas ("Copiar como caminho") não era encontrado → corrigido
-- Rodada 1: 81/83 → depois das correções: **84/84**
+- Rodada 1: 81/83 → depois das correções: **84/84** (hoje 83, após reduzir os exemplos)
 - Relatório em `RELATORIO_TESTES.md`
 
 **Fala:** "Os testes encontraram dois problemas reais, os dois comuns no
@@ -227,12 +226,12 @@ Abra o terminal **na pasta do projeto antes de começar** e deixe a fonte grande
 | 3 | `2` → `101` | Passo a passo q0→q1→q0→q1, `Resultado: ACEITA (terminou em q1)` | Kauê explica o caminho |
 | 4 | `2` → `100` | `Resultado: REJEITA (terminou em q0)` | Kauê |
 | 5 | `2` → `102` | `símbolo inválido '2' na posição 3`; o menu volta | Enzo: "Não travou." Kauê: "E ele diz onde está o erro." |
-| 6 | `1` → `exemplos/zeros_pares.json`, depois `2` → *Enter* | Sequência vazia: `Resultado: ACEITA (terminou em par)` | Kauê: "Zero zeros é par." |
-| 7 | `1` → `exemplos/invalidos/varios_erros.json` | Lista de 5 problemas | Yruan |
+| 6 | `2` → *Enter* | Sequência vazia: `Resultado: REJEITA (terminou em q0)` | Kauê: "Sem transições; q0 não é final." |
+| 7 | `1` → `exemplos/contem_ab.json`, depois `2` → `bab` | q0→q0→q1→q2, `Resultado: ACEITA (terminou em q2)` | Yruan: "Outro AFD, só trocando o JSON." |
 | 8 | `0` | Encerra | — |
-| 9 | `python -m unittest` | `Ran 84 tests ... OK` | Matheus (liga com o slide 10) |
+| 9 | `python -m unittest` | `Ran 83 tests ... OK` | Matheus (liga com o slide 10) |
 
-Isso cobre o que o guia exige: **uma aceita, uma rejeitada e um caso inválido** (aqui são três).
+Isso cobre o que o guia exige: **uma aceita, uma rejeitada e um caso inválido**.
 
 **Plano B:** se o computador falhar, tenha prints de cada passo acima nos
 slides ocultos, logo depois do slide 9.
@@ -246,7 +245,7 @@ slides ocultos, logo depois do slide 9.
 | Por que AFD e não AFN? | Kauê | No AFD cada passo tem um único próximo estado, então a simulação é direta e O(n). Todo AFN pode ser convertido em AFD (construção de subconjuntos). |
 | O que acontece com uma transição faltando? | Yruan | O leitor recusa o arquivo antes de simular. O motor também confere, por segurança. |
 | E se o alfabeto tiver símbolos de 2 caracteres, tipo "10"? | Yruan | Não é permitido: a sequência é lida caractere por caractere, e "10" ficaria ambíguo. |
-| Como vocês sabem que está certo? | Matheus | 84 testes automáticos, incluindo o teste exaustivo com todas as sequências até 10 símbolos. |
+| Como vocês sabem que está certo? | Matheus | 83 testes automáticos, incluindo o teste exaustivo com todas as sequências até 10 símbolos. |
 | Qual a complexidade? | Kauê | O(n) no tamanho da sequência; cada símbolo é uma consulta num dicionário. |
 | Dá para usar outro AFD? | Enzo | Sim: basta criar outro JSON no mesmo formato e carregar pela opção 1. |
 
